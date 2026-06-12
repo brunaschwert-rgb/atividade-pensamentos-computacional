@@ -1,0 +1,33 @@
+const int pinoLed = 13;      // Pino onde o LED está conectado
+const int pinoTouch = 2;     // Fio verde que você vai tocar
+
+bool estadoLed = false;      // Guarda se a luminária está ligada ou desligada
+const int sensibilidade = 3;  // Ajuste esse número se ficar ligando sozinho (valores maiores = menos sensível)
+
+void setup() {
+  pinMode(pinoLed, OUTPUT);
+  pinMode(pinoTouch, INPUT);
+  digitalWrite(pinoLed, LOW);
+}
+
+void loop() {
+  // Lê a capacitância do pino descarregando e medindo o tempo de resposta
+  long tempos = 0;
+  
+  pinMode(pinoTouch, OUTPUT);
+  digitalWrite(pinoTouch, LOW);
+  delayMicroseconds(10);
+  pinMode(pinoTouch, INPUT);
+
+  // Conta quanto tempo o pino leva para mudar de estado devido ao toque
+  while (digitalRead(pinoTouch) == LOW && tempos < 100) {
+    tempos++;
+  }
+
+  // Se o tempo for maior que a sensibilidade, significa que você tocou no fio
+  if (tempos > sensibilidade) {
+    estadoLed = !estadoLed;             // Inverte o estado do LED (liga/desliga)
+    digitalWrite(pinoLed, estadoLed);   // Aplica a mudança no LED
+    delay(500);                         // Evita que o LED pisque loucamente com um só toque
+  }
+}
